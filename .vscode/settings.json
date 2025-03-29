@@ -1,4 +1,10 @@
 {
    "editor.tabSize": 3,
-   "cSpell.words": ["SZTE", "polynom"]
+   "cSpell.words": [
+      "antlr",
+      "interp",
+      "javac",
+      "polynom",
+      "SZTE"
+   ]
 }
