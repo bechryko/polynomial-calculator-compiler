@@ -8,3 +8,4 @@ rm -rf $1Lexer.*
 rm -rf $1Listener.*
 rm -rf $1Parser.*
 rm -rf $1Parser\$*
+rm -rf ast/*.class

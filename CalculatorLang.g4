@@ -4,44 +4,49 @@ options {
     language = Java;
 }
 
-start returns [double value]
-  : ( L=line { $value = $L.value; } )*;
+start returns [ast.Node node]
+  : ( L=line { $node = $L.node; } )*;
 
-line returns [double value]
-  : E=expr { $value = $E.value; } EOL
-  | V=var ASSIGN L=line { $value = CalculatorLang.setVarValue($V.key, $L.value); } EOL
+line returns [ast.Node node]
+  : E=expr { $node = $E.node; } EOL
+  | V=var ASSIGN L=line { $node = null; } EOL
   ;
 
-expr returns [double value]
-  : ADD=expr_add { $value = $ADD.value; }
+expr returns [ast.Node node]
+  : ADD=expr_add { $node = $ADD.node; }
   ;
 
-expr_add returns [double value]
-  : MUL=expr_mul { $value = $MUL.value; } ( OP_ADD MUL=expr_mul { $value += $MUL.value; } )*
+expr_add returns [ast.Node node]
+  : MUL=expr_mul { $node = $MUL.node; }
+    ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
   ;
 
-expr_mul returns [double value]
-  : PWR=expr_pwr { $value = $PWR.value; } ( OP_MUL PWR=expr_pwr { $value *= $PWR.value; } )*
+expr_mul returns [ast.Node node]
+  : PWR=expr_pwr { $node = $PWR.node; }
+    ( OP_MUL PWR=expr_pwr { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $PWR.node); } )*
   ;
 
-expr_pwr returns [double value]
-  : T=term { CalculatorLang.initStack($T.value); } ( OP_PWR T=term { CalculatorLang.appendToStack($T.value); } )* { $value = CalculatorLang.getStackValue(); }
+expr_pwr returns [ast.Node node]
+  : T=term { $node = $T.node; }
+    ( OP_PWR T=term { $node = ast.BinaryOperation.appendOperand($OP_PWR.text, $node, $T.node); } )*
   ;
 
-term returns [double value]
-  : NUMBER { $value = Double.parseDouble("0" + $NUMBER.text); }
-  | V=var { $value = CalculatorLang.getVarValue($V.key); }
-  | '(' E=expr ')' { $value = $E.value; System.out.println($value); }
-  | PT=prefixed_term { $value = $PT.value; }
+term returns [ast.Node node]
+  : NUMBER { $node = new ast.Constant($NUMBER.text); }
+  | V=var { $node = null; }
+  | '(' E=expr ')' { $node = $E.node; }
+  | PT=prefixed_term { $node = $PT.node; }
   ;
 
-prefixed_term returns [double value]
-  : { CalculatorLang.initSignValue(); } ( OP_ADD { CalculatorLang.newSignValue($OP_ADD.text); } )+ T=term { $value = CalculatorLang.getSignedValue($T.value); }
+prefixed_term returns [ast.UnaryOperation node]
+  : { CalculatorLang.initSignValue(); }
+    ( OP_ADD { CalculatorLang.newSignValue($OP_ADD.text); } )+ T=term
+    { $node = new ast.UnaryOperation(CalculatorLang.getSign(), $T.node); }
   ;
 
 var returns [String key]
   : VAR { $key = $VAR.text; }
-  | VAR_INTERPOLATE_PREFIX L=line VAR_INTERPOLATE_SUFFIX { $key = CalculatorLang.interpolateVarKey($VAR_INTERPOLATE_PREFIX.text, $VAR_INTERPOLATE_SUFFIX.text, $L.value); }
+  | VAR_INTERPOLATE_PREFIX L=line VAR_INTERPOLATE_SUFFIX { $key = ""; }
   ;
 
 WS: [ \t\r\n]+ -> skip;

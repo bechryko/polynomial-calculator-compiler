@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
 import org.antlr.v4.runtime.*;
 
 public class CalculatorLang {
@@ -15,9 +16,9 @@ public class CalculatorLang {
         var parser = new CalculatorLangParser(tokens);
         var startCtx = parser.start();
 
-        System.out.println(startCtx.toStringTree(parser));
-        System.out.println(startCtx.value);
-        System.out.println(savedVariableMapToString());
+        // System.out.println(startCtx.toStringTree(parser));
+        System.out.println(startCtx.node.toString());
+        // System.out.println(savedVariableMapToString());
     }
 
     public static String interpolateVarKey(String prefix, String suffix, double value) {
@@ -69,8 +70,8 @@ public class CalculatorLang {
         }
     }
 
-    public static double getSignedValue(double value) {
-        return "+".equals(sign) ? value : -value;
+    public static String getSign() {
+        return sign;
     }
 
     private static String savedVariableMapToString() {
