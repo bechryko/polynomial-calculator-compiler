@@ -1,6 +1,6 @@
 #!/bin/bash
 
-grammar_name=""
+grammar_name="CalculatorLang"
 antlr_package="antlr-4.11.1-complete.jar"
 input_file=""
 
