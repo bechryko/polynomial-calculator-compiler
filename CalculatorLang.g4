@@ -4,6 +4,10 @@ options {
   language = Java;
 }
 
+@header {
+  import utils.*;
+}
+
 start returns [ast.Node node]
   : ( L=line { $node = $L.node; } )*;
 
@@ -37,9 +41,9 @@ term returns [ast.Node node]
   ;
 
 prefixed_term returns [ast.UnaryOperation node]
-  : { CalculatorLang.initSignValue(); }
-    ( OP_ADD { CalculatorLang.newSignValue($OP_ADD.text); } )+ T=term
-    { $node = new ast.UnaryOperation(CalculatorLang.getSign(), $T.node); }
+  : { var builder = new SignBuilder(); }
+    ( OP_ADD { builder.multiplySign($OP_ADD.text); } )+ T=term
+    { $node = new ast.UnaryOperation(builder.build(), $T.node); }
   ;
 
 WS: [ \t\r\n]+ -> skip;
