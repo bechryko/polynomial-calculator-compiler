@@ -9,3 +9,5 @@ rm -rf $1Listener.*
 rm -rf $1Parser.*
 rm -rf $1Parser\$*
 rm -rf ast/*.class
+rm -rf models/*.class
+rm -rf utils/*.class
