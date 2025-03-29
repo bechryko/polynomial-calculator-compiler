@@ -1,5 +1,9 @@
 {
    "editor.tabSize": 3,
+   "[java]": {
+      "editor.defaultFormatter": "redhat.java",
+      "editor.formatOnSave": true
+   },
    "cSpell.words": [
       "antlr",
       "interp",
