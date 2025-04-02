@@ -1,15 +1,26 @@
 package ast;
 
-public class Constant extends Node {
-   public final double value;
+import models.Polynom;
 
-   public Constant(String text) {
+public class Constant extends Node {
+   public final Polynom value;
+
+   public Constant(Polynom polynom) {
       super(Node.NodeType.CONST);
-      this.value = Double.parseDouble("0" + text);
+      value = polynom;
+   }
+
+   public Constant(double value) {
+      this(Polynom.fromNumber(value));
+   }
+
+   @Override
+   public Polynom getValue() {
+      return value;
    }
 
    @Override
    public String toString() {
-      return String.format("Constant(%s)", value);
+      return String.format("Constant(%s)", value.toString());
    }
 }

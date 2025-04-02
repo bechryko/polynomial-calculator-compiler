@@ -1,5 +1,7 @@
 package ast;
 
+import models.Polynom;
+
 public abstract class Node {
    public enum NodeType {
       INVALID,
@@ -16,4 +18,6 @@ public abstract class Node {
    public Node(NodeType type) {
       this.type = type;
    }
+
+   public abstract Polynom getValue();
 }

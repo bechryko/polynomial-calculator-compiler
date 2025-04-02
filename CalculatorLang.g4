@@ -35,7 +35,11 @@ expr_pwr returns [ast.Node node]
   ;
 
 term returns [ast.Node node]
-  : NUMBER { $node = new ast.Constant($NUMBER.text); }
+  : NUM=number { $node = new ast.Constant($NUM.value); }
+  | '<' { var builder = new PolynomBuilder(); }
+    MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
+    ( POLYNOM_MEMBER_SEPARATOR MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); } )*
+    { $node = new ast.Constant(builder.build()); } '>'
   | '(' E=expr ')' { $node = $E.node; }
   | PT=prefixed_term { $node = $PT.node; }
   ;
@@ -46,12 +50,29 @@ prefixed_term returns [ast.UnaryOperation node]
     { $node = new ast.UnaryOperation(builder.build(), $T.node); }
   ;
 
+polynom_member returns [double coefficient, int power]
+  : NUM=number { $coefficient = $NUM.value; $power = 0; }
+  | NUM=number 'x' { $coefficient = $NUM.value; $power = 1; }
+  | 'x' OP_PWR INT=integer { $coefficient = 1; $power = $INT.value; }
+  | NUM=number 'x' OP_PWR INT=integer { $coefficient = $NUM.value; $power = $INT.value; }
+  ;
+
+number returns [double value]
+  : NUMBER { $value = Double.parseDouble("0" + $NUMBER.text); }
+  ;
+
+integer returns [int value]
+  : INTEGER { $value = Integer.parseInt($INTEGER.text); System.out.println("asd " + $INTEGER.text); }
+  ;
+
 WS: [ \t\r\n]+ -> skip;
 EOL: ';';
 NUMBER: ([0-9]*[.])?[1-9][0-9]*;
+INTEGER: ('0'|[1-9][0-9]*);
 OP_ADD: ('+'|'-');
 OP_MUL: ('*'|'/');
 OP_PWR: '^';
 ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
+POLYNOM_MEMBER_SEPARATOR: '+';
