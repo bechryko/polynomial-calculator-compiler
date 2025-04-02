@@ -11,5 +11,6 @@ public class CalculatorLang {
 
         // System.out.println(startCtx.toStringTree(parser));
         System.out.println(startCtx.node.toString());
+        System.out.println(startCtx.node.getValue());
     }
 }

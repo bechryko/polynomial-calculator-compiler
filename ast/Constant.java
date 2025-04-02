@@ -2,11 +2,10 @@ package ast;
 
 import models.Polynom;
 
-public class Constant extends Node {
+public class Constant implements EvaluatableNode {
    public final Polynom value;
 
    public Constant(Polynom polynom) {
-      super(Node.NodeType.CONST);
       value = polynom;
    }
 

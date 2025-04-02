@@ -8,37 +8,33 @@ options {
   import utils.*;
 }
 
-start returns [ast.Node node]
-  : ( L=line { $node = $L.node; } )*;
+start returns [ast.EvaluatableNode node]
+  : ( L=line { $node = $L.node; } )*
+  ;
 
-line returns [ast.Node node]
+line returns [ast.EvaluatableNode node]
   : E=expr { $node = $E.node; } EOL
   ;
 
-expr returns [ast.Node node]
+expr returns [ast.EvaluatableNode node]
   : ADD=expr_add { $node = $ADD.node; }
   ;
 
-expr_add returns [ast.Node node]
+expr_add returns [ast.EvaluatableNode node]
   : MUL=expr_mul { $node = $MUL.node; }
     ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
   ;
 
-expr_mul returns [ast.Node node]
-  : PWR=expr_pwr { $node = $PWR.node; }
-    ( OP_MUL PWR=expr_pwr { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $PWR.node); } )*
-  ;
-
-expr_pwr returns [ast.Node node]
+expr_mul returns [ast.EvaluatableNode node]
   : T=term { $node = $T.node; }
-    ( OP_PWR T=term { $node = ast.BinaryOperation.appendOperand($OP_PWR.text, $node, $T.node); } )*
+    ( OP_MUL T=term { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $T.node); } )*
   ;
 
-term returns [ast.Node node]
-  : NUM=number { $node = new ast.Constant($NUM.value); }
+term returns [ast.EvaluatableNode node]
+  : NUM=number[false] { $node = new ast.Constant($NUM.value); }
   | '<' { var builder = new PolynomBuilder(); }
     MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
-    ( POLYNOM_MEMBER_SEPARATOR MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); } )*
+    ( '+' MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); } )*
     { $node = new ast.Constant(builder.build()); } '>'
   | '(' E=expr ')' { $node = $E.node; }
   | PT=prefixed_term { $node = $PT.node; }
@@ -57,22 +53,23 @@ polynom_member returns [double coefficient, int power]
   | NUM=number 'x' OP_PWR INT=integer { $coefficient = $NUM.value; $power = $INT.value; }
   ;
 
-number returns [double value]
-  : NUMBER { $value = Double.parseDouble("0" + $NUMBER.text); }
+number [boolean isInteger] returns [double value]
+  : NUMBER {
+    $value = Double.parseDouble("0" + $NUMBER.text);
+
+    if(isInteger && $value % 1 !== 0) {
+      throw new Exception( $value + " is not an integer value!");
+    }
+  }
   ;
 
-integer returns [int value]
-  : INTEGER { $value = Integer.parseInt($INTEGER.text); System.out.println("asd " + $INTEGER.text); }
-  ;
 
 WS: [ \t\r\n]+ -> skip;
 EOL: ';';
 NUMBER: ([0-9]*[.])?[1-9][0-9]*;
-INTEGER: ('0'|[1-9][0-9]*);
 OP_ADD: ('+'|'-');
 OP_MUL: ('*'|'/');
-OP_PWR: '^';
 ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
-POLYNOM_MEMBER_SEPARATOR: '+';
+OP_PWR: '^';

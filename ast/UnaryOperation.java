@@ -1,13 +1,20 @@
 package ast;
 
-public class UnaryOperation extends Node {
-   public final String operator;
-   public final Node operand;
+import models.Polynom;
+import models.UnaryOperator;
 
-   public UnaryOperation(String operator, Node operand) {
-      super(Node.NodeType.UNARY_OP);
-      this.operator = operator;
+public class UnaryOperation implements EvaluatableNode {
+   public final UnaryOperator operator;
+   public final EvaluatableNode operand;
+
+   public UnaryOperation(String operator, EvaluatableNode operand) {
+      this.operator = UnaryOperator.parseString(operator);
       this.operand = operand;
+   }
+
+   @Override
+   public Polynom getValue() {
+      return operator.action.execute(operand.getValue());
    }
 
    @Override

@@ -2,7 +2,7 @@
 
 grammar_name="CalculatorLang"
 antlr_package="antlr-4.11.1-complete.jar"
-input_file=""
+input_file="input1.txt"
 
 if ! [ -e $antlr_package ]
 then
