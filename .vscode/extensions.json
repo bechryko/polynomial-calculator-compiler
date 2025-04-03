@@ -2,6 +2,7 @@
    "recommendations": [
       "mike-lischke.vscode-antlr4",
       "streetsidesoftware.code-spell-checker",
-      "redhat.java"
+      "redhat.java",
+      "pkief.material-icon-theme"
    ]
 }
