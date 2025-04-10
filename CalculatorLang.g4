@@ -12,8 +12,9 @@ options {
   private final VariableHandler vh = new VariableHandler();
 }
 
-start returns [ast.EvaluatableNode node]
-  : ( L=line { $node = $L.node; } )*
+start returns [ast.StartNode node]
+  : { $node = new ast.StartNode(); }
+    ( L=line { $node.addChild($L.node); } )*
   ;
 
 line returns [ast.EvaluatableNode node]
