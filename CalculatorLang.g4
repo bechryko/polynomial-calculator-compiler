@@ -34,7 +34,7 @@ term returns [ast.EvaluatableNode node]
   : NUM=number[false] { $node = new ast.Constant($NUM.value); }
   | '<' { var builder = new PolynomBuilder(); }
     MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
-    ( '+' MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); } )*
+    ( OP_ADD MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient, $OP_ADD.text); } )*
     { $node = new ast.Constant(builder.build()); } '>'
   | '(' E=expr ')' { $node = $E.node; }
   | PT=prefixed_term { $node = $PT.node; }
@@ -47,18 +47,18 @@ prefixed_term returns [ast.UnaryOperation node]
   ;
 
 polynom_member returns [double coefficient, int power]
-  : NUM=number { $coefficient = $NUM.value; $power = 0; }
-  | NUM=number 'x' { $coefficient = $NUM.value; $power = 1; }
-  | 'x' OP_PWR INT=integer { $coefficient = 1; $power = $INT.value; }
-  | NUM=number 'x' OP_PWR INT=integer { $coefficient = $NUM.value; $power = $INT.value; }
+  : 'x' OP_PWR pwr=number[true] { $coefficient = 1; $power = (int)$pwr.value; }
+  | num=number[false] 'x' OP_PWR pwr=number[true] { $coefficient = $num.value; $power = (int)$pwr.value; }
+  | num=number[false] { $coefficient = $num.value; $power = 0; }
+  | num=number[false] 'x' { $coefficient = $num.value; $power = 1; }
   ;
 
 number [boolean isInteger] returns [double value]
   : NUMBER {
     $value = Double.parseDouble("0" + $NUMBER.text);
 
-    if(isInteger && $value % 1 !== 0) {
-      throw new Exception( $value + " is not an integer value!");
+    if(isInteger && $value % 1 != 0) {
+      throw new RuntimeException( $value + " is not an integer value!");
     }
   }
   ;
