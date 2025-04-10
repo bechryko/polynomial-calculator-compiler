@@ -8,16 +8,31 @@ options {
   import utils.*;
 }
 
+@members {
+  private final VariableHandler vh = new VariableHandler();
+}
+
 start returns [ast.EvaluatableNode node]
   : ( L=line { $node = $L.node; } )*
   ;
 
 line returns [ast.EvaluatableNode node]
   : E=expr { $node = $E.node; } EOL
+  | D=declaration { $node = null; $D.node.execute(); } EOL
+  ;
+
+declaration returns [ast.ExecutableNode node]
+  : VARIABLE_TYPE VARIABLE_NAME { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, $VARIABLE_NAME.text, vh); }
   ;
 
 expr returns [ast.EvaluatableNode node]
   : ADD=expr_add { $node = $ADD.node; }
+  | VARIABLE_NAME ASSIGN E=expr
+    {
+      var node = new ast.VariableAssignment($VARIABLE_NAME.text, $E.node, vh);
+      node.execute();
+      $node = node;
+    }
   ;
 
 expr_add returns [ast.EvaluatableNode node]
@@ -38,6 +53,7 @@ term returns [ast.EvaluatableNode node]
     { $node = new ast.Constant(builder.build()); } '>'
   | '(' E=expr ')' { $node = $E.node; }
   | PT=prefixed_term { $node = $PT.node; }
+  | VARIABLE_NAME { $node = new ast.VariableAccess($VARIABLE_NAME.text, vh); }
   ;
 
 prefixed_term returns [ast.UnaryOperation node]
@@ -73,3 +89,5 @@ ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
 OP_PWR: '^';
+VARIABLE_TYPE: ('Number'|'Polynom');
+VARIABLE_NAME: [a-zA-Z][a-zA-Z0-9]*;

@@ -1,1 +1,7 @@
-<7x^2 + 4x + 3> + <1x^2 + 8x + 10>;
+Polynom p1;
+Polynom p2;
+Number coefficient;
+p1 = <7x^2 + 4x + 3>;
+p2 = --------<1x^2 - 8x + 10>;
+coefficient = 4;
+(p2 * coefficient) / p1;
