@@ -1,8 +1,9 @@
 package ast;
 
+import models.Polynom;
 import utils.VariableHandler;
 
-public class VariableDeclaration implements ExecutableNode {
+public class VariableDeclaration implements Node {
    private final String type;
    private final String name;
    private final VariableHandler handler;
@@ -16,6 +17,12 @@ public class VariableDeclaration implements ExecutableNode {
    @Override
    public void execute() {
       handler.declareVariable(name, type);
+   }
+
+   @Override
+   public Polynom getValue() {
+      execute();
+      return null;
    }
 
    @Override

@@ -3,11 +3,11 @@ package ast;
 import models.Polynom;
 import models.UnaryOperator;
 
-public class UnaryOperation implements EvaluatableNode {
+public class UnaryOperation implements Node {
    public final UnaryOperator operator;
-   public final EvaluatableNode operand;
+   public final Node operand;
 
-   public UnaryOperation(String operator, EvaluatableNode operand) {
+   public UnaryOperation(String operator, Node operand) {
       this.operator = UnaryOperator.parseString(operator);
       this.operand = operand;
    }

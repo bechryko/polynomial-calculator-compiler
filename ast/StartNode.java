@@ -5,7 +5,7 @@ import java.util.List;
 
 import models.Polynom;
 
-public class StartNode implements ExecutableNode, EvaluatableNode {
+public class StartNode implements Node {
    private final List<Node> lines = new ArrayList<>();
 
    public final void addChild(Node child) {

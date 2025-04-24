@@ -2,7 +2,7 @@ package ast;
 
 import models.Polynom;
 
-public class Constant implements EvaluatableNode {
+public class Constant implements Node {
    public final Polynom value;
 
    public Constant(Polynom polynom) {

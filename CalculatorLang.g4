@@ -17,16 +17,16 @@ start returns [ast.StartNode node]
     ( L=line { $node.addChild($L.node); } )*
   ;
 
-line returns [ast.EvaluatableNode node]
+line returns [ast.Node node]
   : E=expr { $node = $E.node; } EOL
-  | D=declaration { $node = null; $D.node.execute(); } EOL
+  | D=declaration { $node = $D.node; } EOL
   ;
 
-declaration returns [ast.ExecutableNode node]
+declaration returns [ast.Node node]
   : VARIABLE_TYPE VARIABLE_NAME { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, $VARIABLE_NAME.text, vh); }
   ;
 
-expr returns [ast.EvaluatableNode node]
+expr returns [ast.Node node]
   : ADD=expr_add { $node = $ADD.node; }
   | VARIABLE_NAME ASSIGN E=expr
     {
@@ -36,17 +36,17 @@ expr returns [ast.EvaluatableNode node]
     }
   ;
 
-expr_add returns [ast.EvaluatableNode node]
+expr_add returns [ast.Node node]
   : MUL=expr_mul { $node = $MUL.node; }
     ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
   ;
 
-expr_mul returns [ast.EvaluatableNode node]
+expr_mul returns [ast.Node node]
   : T=term { $node = $T.node; }
     ( OP_MUL T=term { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $T.node); } )*
   ;
 
-term returns [ast.EvaluatableNode node]
+term returns [ast.Node node]
   : NUM=number[false] { $node = new ast.Constant($NUM.value); }
   | '<' { var builder = new PolynomBuilder(); }
     MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }

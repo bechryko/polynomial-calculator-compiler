@@ -3,7 +3,7 @@ package ast;
 import models.Polynom;
 import utils.VariableHandler;
 
-public class VariableAccess implements EvaluatableNode {
+public class VariableAccess implements Node {
    private final String variableName;
    private final VariableHandler handler;
 

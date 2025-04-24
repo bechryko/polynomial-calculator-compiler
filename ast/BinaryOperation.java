@@ -5,11 +5,11 @@ import java.util.List;
 import models.BinaryOperator;
 import models.Polynom;
 
-public class BinaryOperation implements EvaluatableNode {
+public class BinaryOperation implements Node {
    public final BinaryOperator operator;
-   public final List<EvaluatableNode> operands = new ArrayList<>();
+   public final List<Node> operands = new ArrayList<>();
 
-   public static BinaryOperation appendOperand(String operator, EvaluatableNode previous, EvaluatableNode newChild) {
+   public static BinaryOperation appendOperand(String operator, Node previous, Node newChild) {
       if (previous instanceof BinaryOperation parent) {
          if (!operator.equals(parent.operator.value)) {
             throw new RuntimeException("Operation mismatch");
@@ -23,12 +23,12 @@ public class BinaryOperation implements EvaluatableNode {
       return binParent;
    }
 
-   private BinaryOperation(BinaryOperator operator, EvaluatableNode firstNode) {
+   private BinaryOperation(BinaryOperator operator, Node firstNode) {
       this.operator = operator;
       addOperandNode(firstNode);
    }
 
-   public final void addOperandNode(EvaluatableNode node) {
+   public final void addOperandNode(Node node) {
       operands.add(node);
    }
 
