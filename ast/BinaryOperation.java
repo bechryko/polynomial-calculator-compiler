@@ -11,11 +11,10 @@ public class BinaryOperation implements Node {
 
    public static BinaryOperation appendOperand(String operator, Node previous, Node newChild) {
       if (previous instanceof BinaryOperation parent) {
-         if (!operator.equals(parent.operator.value)) {
-            throw new RuntimeException("Operation mismatch");
+         if (operator.equals(parent.operator.value)) {
+            parent.addOperandNode(newChild);
+            return parent;
          }
-         parent.addOperandNode(newChild);
-         return parent;
       }
 
       var binParent = new BinaryOperation(BinaryOperator.parseString(operator), previous);
