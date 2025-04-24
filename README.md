@@ -20,3 +20,10 @@ Project for the MSc course Compilers in SZTE.
     - the evaluation operation has a high priority.
  - The program's `show` statement prints the value of the specified expression (if it is a polynomial, then the polynomial).
  - The program can have real type variables (`number`) which can be used as coefficients in polynomials.
+
+## Bonus tasks
+
+ - The program can have conditions in the syntax `if (<condition>) { <lines of code> }`, which can be used as a standalone expression, or inline as a value. The value is the block's last line's value.
+ - The program can have loops, which can be used as a standalone expression, or inline as a value. The value is the last line's value in the loop's last run.
+    - It can be a "while" loop in the syntax `while (<condition>) { <lines of code> }`.
+    - It can be a "for" loop in the syntax `for (<expression>; <condition>; <expression>) { <lines of code> }`.
