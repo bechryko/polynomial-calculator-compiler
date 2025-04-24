@@ -1,9 +1,10 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import utils.PolynomBuilder;
 
 public class Polynom implements Cloneable {
@@ -118,8 +119,13 @@ public class Polynom implements Cloneable {
          return Double.toString(asNumber());
       }
 
+      List<Map.Entry<Integer, Double>> entries = new ArrayList<>(coefficientMap.entrySet());
+      entries.sort((var entry1, var entry2) -> {
+         return entry2.getKey() - entry1.getKey();
+      });
+
       var sb = new StringBuilder("<");
-      for (var entry : coefficientMap.entrySet()) {
+      for (var entry : entries) {
          double coefficient = entry.getValue();
          if (coefficient != 1) {
             sb.append(coefficient).append(" ");
@@ -130,6 +136,8 @@ public class Polynom implements Cloneable {
             sb.append("x");
          } else if (power != 0) {
             sb.append(String.format("x^%d", entry.getKey()));
+         } else {
+            sb.delete(sb.length() - 1, sb.length());
          }
 
          sb.append(", ");
