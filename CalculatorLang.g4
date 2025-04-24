@@ -17,7 +17,6 @@ start returns [ast.StartNode node]
     ( L=line { $node.addChild($L.node); } )*
   ;
 
-// az órán itt NodeList-et adtunk vissza, ami tartalmazza az adott blokkban/szekvenciában lévő Node-okat -> azokat így egyben lehet kezelni ciklusokban meg elágazásokban
 block returns [ast.StartNode node]
   : { $node = new ast.StartNode(); }
     BLOCK_OPENING ( L=line { $node.addChild($L.node); } )* BLOCK_CLOSING
@@ -32,7 +31,6 @@ declaration returns [ast.Node node]
   : VARIABLE_TYPE VARIABLE_NAME { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, $VARIABLE_NAME.text, vh); }
   ;
 
-// órán ez a line-ban volt, én azért raktam ide hogy inline is lehessen használni (lásd: input1.txt)
 expr returns [ast.Node node]
   : ADD=expr_add { $node = $ADD.node; }
   | a=assignment { $node = $a.node; }
@@ -54,7 +52,6 @@ while returns [ast.LoopNode node]
   : KEYWORD_WHILE PAREN_OPENING e=expr PAREN_CLOSING b=block { $node = new ast.LoopNode($e.node, $b.node); }
   ;
 
-// az if és while a két legalapabb vezérlési szerkezet, a többit (pl. for) vissza lehet vezetni rájuk
 for returns [ast.LoopNode node]
   : KEYWORD_FOR PAREN_OPENING a=assignment EOL e=expr EOL l=line PAREN_CLOSING b=block
     { $node = new ast.LoopNode($a.node, $e.node, $l.node, $b.node); }
@@ -113,7 +110,6 @@ ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
 OP_PWR: '^';
-// kulcsszavak a variable name / id fölött legyenek, különben világvége lesz
 KEYWORD_IF: 'if';
 KEYWORD_ELSE: 'else';
 KEYWORD_WHILE: 'while';

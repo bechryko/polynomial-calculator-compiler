@@ -3,12 +3,6 @@ package ast;
 import models.Polynom;
 
 public class LoopNode implements Node {
-   /*
-    * Az óraiban ez eléggé más volt, én így csináltam h úgy működjön inline ahogy
-    * én akarom. Lényegében egy NodeList volt benne, amit ismételni kell (amit a
-    * grammar file-ban a block / sequence szabály ad), és ahhoz adta hozzá az
-    * endOp-ot.
-    */
    private final Node preOp;
    private final Node condition;
    private final Node endOp;
