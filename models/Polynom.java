@@ -102,10 +102,13 @@ public class Polynom implements Cloneable {
 
    public boolean isNumber() {
       var keys = coefficientMap.keySet();
-      return keys.size() == 1 && keys.contains(0);
+      return keys.isEmpty() || (keys.size() == 1 && keys.contains(0));
    }
 
    public double asNumber() {
+      if (coefficientMap.keySet().isEmpty()) {
+         return 0;
+      }
       return coefficientMap.get(0);
    }
 

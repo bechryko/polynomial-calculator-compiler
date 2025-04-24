@@ -83,7 +83,7 @@ number [boolean isInteger] returns [double value]
 
 WS: [ \t\r\n]+ -> skip;
 EOL: ';';
-NUMBER: ([0-9]*[.])?[1-9][0-9]*;
+NUMBER: ([0-9]*[.])?[0-9]+;
 OP_ADD: ('+'|'-');
 OP_MUL: ('*'|'/');
 ASSIGN: '=';
