@@ -13,6 +13,11 @@ public class UnaryOperation implements Node {
    }
 
    @Override
+   public void execute() {
+      operand.execute();
+   }
+
+   @Override
    public Polynom getValue() {
       return operator.action.execute(operand.getValue());
    }

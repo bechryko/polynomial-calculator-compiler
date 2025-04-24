@@ -15,13 +15,14 @@ public class VariableAssignment implements Node {
    }
 
    @Override
-   public Polynom getValue() {
-      return value.getValue();
+   public void execute() {
+      value.execute();
+      handler.assignValue(name, value.getValue());
    }
 
    @Override
-   public void execute() {
-      handler.assignValue(name, getValue());
+   public Polynom getValue() {
+      return handler.accessVariableValue(name);
    }
 
    @Override

@@ -2,7 +2,6 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import models.Polynom;
 
 public class StartNode implements Node {
@@ -13,17 +12,15 @@ public class StartNode implements Node {
    }
 
    @Override
-   public Polynom getValue() {
-      var last = lines.getLast();
-      if (last instanceof EvaluatableNode evaluatableNode) {
-         return evaluatableNode.getValue();
+   public void execute() {
+      for (var line : lines) {
+         line.execute();
       }
-      return null;
    }
 
    @Override
-   public void execute() {
-      throw new UnsupportedOperationException("Not supported yet.");
+   public Polynom getValue() {
+      return lines.getLast().getValue();
    }
 
    @Override

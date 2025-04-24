@@ -32,6 +32,13 @@ public class BinaryOperation implements Node {
    }
 
    @Override
+   public void execute() {
+      for (var operand : operands) {
+         operand.execute();
+      }
+   }
+
+   @Override
    public Polynom getValue() {
       Polynom result = null;
       for (var operand : operands) {
