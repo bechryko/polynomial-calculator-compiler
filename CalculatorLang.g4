@@ -17,6 +17,12 @@ start returns [ast.StartNode node]
     ( L=line { $node.addChild($L.node); } )*
   ;
 
+// az órán itt NodeList-et adtunk vissza, ami tartalmazza az adott blokkban/szekvenciában lévő Node-okat -> azokat így egyben lehet kezelni ciklusokban meg elágazásokban
+block returns [ast.StartNode node]
+  : { $node = new ast.StartNode(); }
+    BLOCK_OPENING ( L=line { $node.addChild($L.node); } )* BLOCK_CLOSING
+  ;
+
 line returns [ast.Node node]
   : E=expr { $node = $E.node; } EOL
   | D=declaration { $node = $D.node; } EOL
@@ -26,14 +32,32 @@ declaration returns [ast.Node node]
   : VARIABLE_TYPE VARIABLE_NAME { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, $VARIABLE_NAME.text, vh); }
   ;
 
+// órán ez a line-ban volt, én azért raktam ide hogy inline is lehessen használni (lásd: input1.txt)
 expr returns [ast.Node node]
   : ADD=expr_add { $node = $ADD.node; }
-  | VARIABLE_NAME ASSIGN E=expr
-    {
-      var node = new ast.VariableAssignment($VARIABLE_NAME.text, $E.node, vh);
-      node.execute();
-      $node = node;
-    }
+  | a=assignment { $node = $a.node; }
+  | i=if { $node = $i.node; }
+  | w=while { $node = $w.node; }
+  | f=for { $node = $f.node; }
+  ;
+
+assignment returns [ast.Node node]
+  : VARIABLE_NAME ASSIGN E=expr { $node = new ast.VariableAssignment($VARIABLE_NAME.text, $E.node, vh); }
+  ;
+
+if returns [ast.ConditionNode node]
+  : KEYWORD_IF PAREN_OPENING e=expr PAREN_CLOSING trueCase=block
+    ( KEYWORD_ELSE falseCase=block )? { $node = new ast.ConditionNode($e.node, $trueCase.node, $falseCase.node); }
+  ;
+
+while returns [ast.LoopNode node]
+  : KEYWORD_WHILE PAREN_OPENING e=expr PAREN_CLOSING b=block { $node = new ast.LoopNode($e.node, $b.node); }
+  ;
+
+// az if és while a két legalapabb vezérlési szerkezet, a többit (pl. for) vissza lehet vezetni rájuk
+for returns [ast.LoopNode node]
+  : KEYWORD_FOR PAREN_OPENING a=assignment EOL e=expr EOL l=line PAREN_CLOSING b=block
+    { $node = new ast.LoopNode($a.node, $e.node, $l.node, $b.node); }
   ;
 
 expr_add returns [ast.Node node]
@@ -80,7 +104,6 @@ number [boolean isInteger] returns [double value]
   }
   ;
 
-
 WS: [ \t\r\n]+ -> skip;
 EOL: ';';
 NUMBER: ([0-9]*[.])?[0-9]+;
@@ -90,5 +113,12 @@ ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
 OP_PWR: '^';
+// kulcsszavak a variable name / id fölött legyenek, különben világvége lesz
+KEYWORD_IF: 'if';
+KEYWORD_ELSE: 'else';
+KEYWORD_WHILE: 'while';
+KEYWORD_FOR: 'for';
+BLOCK_OPENING: '{';
+BLOCK_CLOSING: '}';
 VARIABLE_TYPE: ('Number'|'Polynom');
 VARIABLE_NAME: [a-zA-Z][a-zA-Z0-9]*;
