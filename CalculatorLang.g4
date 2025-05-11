@@ -125,4 +125,4 @@ KEYWORD_FOR: 'for';
 BLOCK_OPENING: '{';
 BLOCK_CLOSING: '}';
 VARIABLE_TYPE: ('Number'|'Polynom');
-VARIABLE_NAME: [a-zA-Z][a-zA-Z0-9]*;
+VARIABLE_NAME: [a-zA-Z_][a-zA-Z0-9_]*;
