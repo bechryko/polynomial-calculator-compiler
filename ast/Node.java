@@ -7,4 +7,7 @@ public interface Node {
    }
 
    Polynom getValue();
+
+   @Override
+   String toString();
 }
