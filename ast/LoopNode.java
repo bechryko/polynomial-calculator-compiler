@@ -1,31 +1,34 @@
 package ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.Polynom;
 
 public class LoopNode implements Node {
-   private final Node preOp;
+   private final List<Node> preOps;
    private final Node condition;
-   private final Node endOp;
+   private final List<Node> endOps;
    private final StartNode node;
    private Polynom lastValue;
 
    public LoopNode(Node condition, StartNode node) {
       this.condition = condition;
       this.node = node;
-      this.preOp = null;
-      this.endOp = null;
+      this.preOps = new ArrayList<>();
+      this.endOps = new ArrayList<>();
    }
 
-   public LoopNode(Node preOp, Node condition, Node endOp, StartNode node) {
+   public LoopNode(List<Node> preOps, Node condition, List<Node> endOps, StartNode node) {
       this.condition = condition;
       this.node = node;
-      this.endOp = endOp;
-      this.preOp = preOp;
+      this.endOps = endOps;
+      this.preOps = preOps;
    }
 
    @Override
    public void execute() {
-      for (executeIfNotNull(preOp); getConditionValue(); executeIfNotNull(endOp)) {
+      for (executeAll(preOps); getConditionValue(); executeAll(endOps)) {
          node.execute();
          lastValue = node.getValue();
       }
@@ -36,20 +39,30 @@ public class LoopNode implements Node {
       return lastValue;
    }
 
+   @Override
+   public String toString() {
+      return String.format("Loop((%s) ?(%s) (%s), %s)", joinNodeStrings(preOps), condition, joinNodeStrings(endOps),
+            node);
+   }
+
    private boolean getConditionValue() {
       var conditionValue = condition.getValue();
       boolean conditionValueBool = !conditionValue.isNumber() || conditionValue.asNumber() != 0;
       return conditionValueBool;
    }
 
-   private void executeIfNotNull(Node node) {
-      if (node != null) {
+   private void executeAll(List<Node> nodes) {
+      nodes.forEach(node -> {
          node.execute();
-      }
+      });
    }
 
-   @Override
-   public String toString() {
-      return String.format("Loop(%s -> %s, %s)", preOp != null ? preOp : "-", condition, node);
+   private String joinNodeStrings(List<Node> nodes) {
+      var sb = new StringBuilder();
+      nodes.forEach(node -> {
+         sb.append(node.toString()).append(", ");
+      });
+      sb.delete(sb.length() - 2, sb.length());
+      return sb.toString();
    }
 }

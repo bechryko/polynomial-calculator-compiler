@@ -39,6 +39,11 @@ expr returns [ast.Node node]
   | a=assignment { $node = $a.node; }
   ;
 
+expr_list returns [List<ast.Node> nodes]
+  : e=expr { $nodes = new ArrayList<ast.Node>(); $nodes.add($e.node); }
+    ( OP_SEPARATOR e=expr { $nodes.add($e.node); } )*
+  ;
+
 expr_add returns [ast.Node node]
   : MUL=expr_mul { $node = $MUL.node; }
     ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
@@ -79,8 +84,8 @@ while returns [ast.LoopNode node]
   ;
 
 for returns [ast.LoopNode node]
-  : KEYWORD_FOR PAREN_OPENING a=assignment EOL e=expr EOL l=line PAREN_CLOSING b=block
-    { $node = new ast.LoopNode($a.node, $e.node, $l.node, $b.node); }
+  : KEYWORD_FOR PAREN_OPENING al=expr_list EOL e=expr EOL el=expr_list PAREN_CLOSING b=block
+    { $node = new ast.LoopNode($al.nodes, $e.node, $el.nodes, $b.node); }
   ;
 
 prefixed_term returns [ast.UnaryOperation node]
