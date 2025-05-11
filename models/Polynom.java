@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import utils.PolynomBuilder;
 
 public class Polynom implements Cloneable {
@@ -127,14 +128,16 @@ public class Polynom implements Cloneable {
          return entry2.getKey() - entry1.getKey();
       });
 
+      String separator = ", ";
       var sb = new StringBuilder("<");
       for (var entry : entries) {
          double coefficient = entry.getValue();
-         if (coefficient != 1) {
+         int power = entry.getKey();
+
+         if (coefficient != 1 || (coefficient == 1 && power == 0)) {
             sb.append(coefficient).append(" ");
          }
 
-         int power = entry.getKey();
          if (power == 1) {
             sb.append("x");
          } else if (power != 0) {
@@ -143,9 +146,9 @@ public class Polynom implements Cloneable {
             sb.delete(sb.length() - 1, sb.length());
          }
 
-         sb.append(", ");
+         sb.append(separator);
       }
-      sb.delete(sb.length() - 2, sb.length());
+      sb.delete(sb.length() - separator.length(), sb.length());
       sb.append(">");
 
       return sb.toString();
