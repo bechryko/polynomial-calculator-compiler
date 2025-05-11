@@ -55,6 +55,7 @@ term returns [ast.Node node]
   | i=if { $node = $i.node; }
   | w=while { $node = $w.node; }
   | f=for { $node = $f.node; }
+  | KEYWORD_SHOW t=term { $node = new ast.ShowNode($t.node); }
   | PAREN_OPENING E=expr PAREN_CLOSING { $node = $E.node; }
   | PT=prefixed_term { $node = $PT.node; }
   | VARIABLE_NAME { $node = new ast.VariableAccess($VARIABLE_NAME.text, vh); }
@@ -113,6 +114,7 @@ PAREN_CLOSING: ')';
 POLYNOM_START: '<';
 POLYNOM_CLOSE: '>';
 OP_PWR: '^';
+KEYWORD_SHOW: 'show';
 KEYWORD_IF: 'if';
 KEYWORD_ELSE: 'else';
 KEYWORD_WHILE: 'while';
