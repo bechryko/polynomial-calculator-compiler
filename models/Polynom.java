@@ -164,10 +164,16 @@ public class Polynom implements Cloneable {
    }
 
    private void deleteUnusedKeys() {
+      var keysToDelete = new ArrayList<Integer>();
+
       for (var entry : coefficientMap.entrySet()) {
          if (entry.getValue() == 0) {
-            coefficientMap.remove(entry.getKey());
+            keysToDelete.add(entry.getKey());
          }
       }
+
+      keysToDelete.forEach(key -> {
+         coefficientMap.remove(key);
+      });
    }
 }
