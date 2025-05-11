@@ -106,7 +106,7 @@ WS: [ \t\r\n]+ -> skip;
 EOL: ';';
 NUMBER: ([0-9]*[.])?[0-9]+;
 OP_ADD: ('+'|'-');
-OP_MUL: ('*'|'/');
+OP_MUL: ('*'|'/'|'%');
 ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
