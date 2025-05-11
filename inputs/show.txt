@@ -1,2 +1,5 @@
 --+-++-+- show -+-<x^2 - 6>;
+// should show: <x^2 - 6>;
 <x^2 + 4> * show (<x - 7> + <x^3 + 2x + 1>) - show <x^3 - 2x^2 - 4> / <x - 3>;
+// should show: <x^3 + 3 x - 6>
+// should show: <x^3 - 2 x^2 - 4>

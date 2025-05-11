@@ -128,5 +128,6 @@ KEYWORD_WHILE: 'while';
 KEYWORD_FOR: 'for';
 BLOCK_OPENING: '{';
 BLOCK_CLOSING: '}';
+COMMENT: '//'(.)*?[\n] -> skip;
 VARIABLE_TYPE: ('Number'|'Polynom');
 VARIABLE_NAME: [a-zA-Z_][a-zA-Z0-9_]*;
