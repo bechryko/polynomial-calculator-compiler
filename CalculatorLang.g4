@@ -86,6 +86,7 @@ prefixed_term returns [ast.UnaryOperation node]
 
 polynom_member returns [double coefficient, int power]
   : 'x' OP_PWR pwr=number[true] { $coefficient = 1; $power = (int)$pwr.value; }
+  | 'x' { $coefficient = 1; $power = 1; }
   | num=number[false] 'x' OP_PWR pwr=number[true] { $coefficient = $num.value; $power = (int)$pwr.value; }
   | num=number[false] { $coefficient = $num.value; $power = 0; }
   | num=number[false] 'x' { $coefficient = $num.value; $power = 1; }
