@@ -86,6 +86,8 @@ while returns [ast.LoopNode node]
 for returns [ast.LoopNode node]
   : KEYWORD_FOR PAREN_OPENING al=expr_list EOL e=expr EOL el=expr_list PAREN_CLOSING b=block
     { $node = new ast.LoopNode($al.nodes, $e.node, $el.nodes, $b.node); }
+  | KEYWORD_FOR PAREN_OPENING e=expr KEYWORD_TIMES PAREN_CLOSING b=block
+    { $node = new ast.LoopNode($e.node, $b.node, true); }
   ;
 
 prefixed_term returns [ast.UnaryOperation node]
@@ -131,6 +133,7 @@ KEYWORD_IF: 'if';
 KEYWORD_ELSE: 'else';
 KEYWORD_WHILE: 'while';
 KEYWORD_FOR: 'for';
+KEYWORD_TIMES: 'times';
 BLOCK_OPENING: '{';
 BLOCK_CLOSING: '}';
 COMMENT: '//'(.)*?[\n] -> skip;
