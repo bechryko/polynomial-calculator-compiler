@@ -28,7 +28,10 @@ line returns [ast.Node node]
   ;
 
 declaration returns [ast.Node node]
-  : VARIABLE_TYPE VARIABLE_NAME { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, $VARIABLE_NAME.text, vh); }
+  : VARIABLE_TYPE { var varsToDeclare = new ArrayList<String>(); }
+    VARIABLE_NAME { varsToDeclare.add($VARIABLE_NAME.text); }
+    ( OP_SEPARATOR VARIABLE_NAME { varsToDeclare.add($VARIABLE_NAME.text); } )*
+    { $node = new ast.VariableDeclaration($VARIABLE_TYPE.text, varsToDeclare, vh); }
   ;
 
 expr returns [ast.Node node]
@@ -109,6 +112,7 @@ EOL: ';';
 NUMBER: ([0-9]*[.])?[0-9]+;
 OP_ADD: ('+'|'-');
 OP_MUL: ('*'|'/'|'%');
+OP_SEPARATOR: ',';
 OP_EVAL_OPENING: '[';
 OP_EVAL_CLOSING: ']';
 ASSIGN: '=';
