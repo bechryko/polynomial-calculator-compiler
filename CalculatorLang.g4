@@ -57,6 +57,7 @@ term returns [ast.Node node]
   | f=for { $node = $f.node; }
   | KEYWORD_SHOW t=term { $node = new ast.ShowNode($t.node); }
   | PAREN_OPENING E=expr PAREN_CLOSING { $node = $E.node; }
+  | t=term OP_EVAL_OPENING evalPlace=expr OP_EVAL_CLOSING { $node = new ast.Evaluation($t.node, $evalPlace.node); }
   | PT=prefixed_term { $node = $PT.node; }
   | VARIABLE_NAME { $node = new ast.VariableAccess($VARIABLE_NAME.text, vh); }
   ;
@@ -108,6 +109,8 @@ EOL: ';';
 NUMBER: ([0-9]*[.])?[0-9]+;
 OP_ADD: ('+'|'-');
 OP_MUL: ('*'|'/'|'%');
+OP_EVAL_OPENING: '[';
+OP_EVAL_CLOSING: ']';
 ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';

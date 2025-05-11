@@ -10,7 +10,7 @@ coefficient = if (0) {
 };
 Number idx;
 Number asd;
-asd = for(idx = 0; idx - 3; idx = idx + 1) {
+asd = for(idx = 0; idx - 3; idx = idx + 1;) {
    (coefficient = coefficient - 1) + 10;
 };
-asd;
+p1[p1[3]];
