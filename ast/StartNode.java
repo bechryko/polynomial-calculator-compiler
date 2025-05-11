@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import models.Polynom;
 
 public class StartNode implements Node {
@@ -20,7 +21,7 @@ public class StartNode implements Node {
 
    @Override
    public Polynom getValue() {
-      return lines.getLast().getValue();
+      return lines.get(lines.size() - 1).getValue();
    }
 
    @Override

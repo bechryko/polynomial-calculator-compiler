@@ -34,9 +34,30 @@ declaration returns [ast.Node node]
 expr returns [ast.Node node]
   : ADD=expr_add { $node = $ADD.node; }
   | a=assignment { $node = $a.node; }
+  ;
+
+expr_add returns [ast.Node node]
+  : MUL=expr_mul { $node = $MUL.node; }
+    ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
+  ;
+
+expr_mul returns [ast.Node node]
+  : T=term { $node = $T.node; }
+    ( OP_MUL T=term { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $T.node); } )*
+  ;
+
+term returns [ast.Node node]
+  : NUM=number[false] { $node = new ast.Constant($NUM.value); }
+  | POLYNOM_START { var builder = new PolynomBuilder(); }
+    MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
+    ( OP_ADD MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient, $OP_ADD.text); } )*
+    { $node = new ast.Constant(builder.build()); } POLYNOM_CLOSE
   | i=if { $node = $i.node; }
   | w=while { $node = $w.node; }
   | f=for { $node = $f.node; }
+  | PAREN_OPENING E=expr PAREN_CLOSING { $node = $E.node; }
+  | PT=prefixed_term { $node = $PT.node; }
+  | VARIABLE_NAME { $node = new ast.VariableAccess($VARIABLE_NAME.text, vh); }
   ;
 
 assignment returns [ast.Node node]
@@ -55,27 +76,6 @@ while returns [ast.LoopNode node]
 for returns [ast.LoopNode node]
   : KEYWORD_FOR PAREN_OPENING a=assignment EOL e=expr EOL l=line PAREN_CLOSING b=block
     { $node = new ast.LoopNode($a.node, $e.node, $l.node, $b.node); }
-  ;
-
-expr_add returns [ast.Node node]
-  : MUL=expr_mul { $node = $MUL.node; }
-    ( OP_ADD MUL=expr_mul { $node = ast.BinaryOperation.appendOperand($OP_ADD.text, $node, $MUL.node); } )*
-  ;
-
-expr_mul returns [ast.Node node]
-  : T=term { $node = $T.node; }
-    ( OP_MUL T=term { $node = ast.BinaryOperation.appendOperand($OP_MUL.text, $node, $T.node); } )*
-  ;
-
-term returns [ast.Node node]
-  : NUM=number[false] { $node = new ast.Constant($NUM.value); }
-  | '<' { var builder = new PolynomBuilder(); }
-    MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
-    ( OP_ADD MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient, $OP_ADD.text); } )*
-    { $node = new ast.Constant(builder.build()); } '>'
-  | '(' E=expr ')' { $node = $E.node; }
-  | PT=prefixed_term { $node = $PT.node; }
-  | VARIABLE_NAME { $node = new ast.VariableAccess($VARIABLE_NAME.text, vh); }
   ;
 
 prefixed_term returns [ast.UnaryOperation node]
@@ -109,6 +109,8 @@ OP_MUL: ('*'|'/');
 ASSIGN: '=';
 PAREN_OPENING: '(';
 PAREN_CLOSING: ')';
+POLYNOM_START: '<';
+POLYNOM_CLOSE: '>';
 OP_PWR: '^';
 KEYWORD_IF: 'if';
 KEYWORD_ELSE: 'else';
