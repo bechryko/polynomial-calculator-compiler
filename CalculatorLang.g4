@@ -57,9 +57,9 @@ expr_mul returns [ast.Node node]
 term returns [ast.Node node]
   : NUM=number[false] { $node = new ast.Constant($NUM.value); }
   | POLYNOM_START { var builder = new PolynomBuilder(); }
-    MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient); }
-    ( OP_ADD MEM=polynom_member { builder.addCoefficient($MEM.power, $MEM.coefficient, $OP_ADD.text); } )*
-    { $node = new ast.Constant(builder.build()); } POLYNOM_CLOSE
+    mem=polynom_member { builder.addCoefficient($mem.value); }
+    ( OP_ADD mem=polynom_member { builder.addCoefficient($mem.value, $OP_ADD.text); } )*
+    { $node = new ast.LazyConstant(builder, vh); } POLYNOM_CLOSE
   | i=if { $node = $i.node; }
   | w=while { $node = $w.node; }
   | f=for { $node = $f.node; }
@@ -96,12 +96,19 @@ prefixed_term returns [ast.UnaryOperation node]
     { $node = new ast.UnaryOperation(builder.build(), $T.node); }
   ;
 
-polynom_member returns [double coefficient, int power]
-  : 'x' OP_PWR pwr=number[true] { $coefficient = 1; $power = (int)$pwr.value; }
-  | 'x' { $coefficient = 1; $power = 1; }
-  | num=number[false] 'x' OP_PWR pwr=number[true] { $coefficient = $num.value; $power = (int)$pwr.value; }
-  | num=number[false] { $coefficient = $num.value; $power = 0; }
-  | num=number[false] 'x' { $coefficient = $num.value; $power = 1; }
+polynom_member returns [PolynomBuilder.PolynomBuildMember value]
+  : 'x' OP_PWR pwr=number[true] { $value = new PolynomBuilder.PolynomBuildMember(1, (int) $pwr.value); }
+  | 'x' { $value = new PolynomBuilder.PolynomBuildMember(1, 1); }
+  | coe=polynom_coefficient 'x' OP_PWR pwr=number[true] {
+      $value = new PolynomBuilder.PolynomBuildMember($coe.value, $coe.varName, (int) $pwr.value);
+    }
+  | coe=polynom_coefficient { $value = new PolynomBuilder.PolynomBuildMember($coe.value, $coe.varName, 0); }
+  | coe=polynom_coefficient 'x' { $value = new PolynomBuilder.PolynomBuildMember($coe.value, $coe.varName, 1); }
+  ;
+
+polynom_coefficient returns [double value, String varName]
+  : num=number[false] { $value = $num.value; }
+  | VARIABLE_NAME { $varName = $VARIABLE_NAME.text; }
   ;
 
 number [boolean isInteger] returns [double value]

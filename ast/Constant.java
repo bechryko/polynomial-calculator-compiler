@@ -5,12 +5,8 @@ import models.Polynom;
 public class Constant implements Node {
    public final Polynom value;
 
-   public Constant(Polynom polynom) {
-      value = polynom;
-   }
-
    public Constant(double value) {
-      this(Polynom.fromNumber(value));
+      this.value = Polynom.fromNumber(value);
    }
 
    @Override
