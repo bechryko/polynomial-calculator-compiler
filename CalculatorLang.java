@@ -9,9 +9,23 @@ public class CalculatorLang {
         var parser = new CalculatorLangParser(tokens);
         var startCtx = parser.start();
 
-        // System.out.println(startCtx.toStringTree(parser));
+        boolean printNodes = false;
+        boolean printStringTree = false;
+        for (var arg : args) {
+            if ("--print-nodes".equals(arg)) {
+                printNodes = true;
+            } else if ("--print-string-tree".equals(arg)) {
+                printStringTree = true;
+            }
+        }
+
+        if (printStringTree) {
+            System.out.println(startCtx.toStringTree(parser));
+        }
         startCtx.node.execute();
-        System.out.println(startCtx.node.toString());
+        if (printNodes) {
+            System.out.println(startCtx.node.toString());
+        }
         System.out.println(startCtx.node.getValue());
     }
 }
