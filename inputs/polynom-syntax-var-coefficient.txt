@@ -1,0 +1,5 @@
+Number a, b;
+
+a = 2;
+b = a * a + 7;
+<b x^3 - 2 x^2 + a x - a>;

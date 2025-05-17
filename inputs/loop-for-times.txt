@@ -1,0 +1,11 @@
+Polynom result, tmpPol;
+Number highest;
+
+highest = 10;
+result = 0;
+for((3 * 3 + 1) times) {
+   tmpPol = 1;
+   result = result + for(highest times) { tmpPol = tmpPol * <x>; } * highest;
+   highest = highest - 1;
+};
+result;

@@ -1,0 +1,13 @@
+Polynom mul;
+Polynom value;
+Number power;
+
+mul = <7x^2 + 4x + 3>;
+value = 1;
+power = 5;
+
+while(power) {
+   value = value * mul;
+   power = power - 1;
+};
+value;

@@ -1,4 +1,5 @@
-polynom a, b, c;
+//polynom a, b, c;
+Polynom a, b, c;
 a = <x - 1>;
 b = <x + 1x^0>;
 c = a / b + <2x + 2>[3];

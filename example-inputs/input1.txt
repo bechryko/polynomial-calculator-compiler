@@ -1,5 +1,7 @@
-polynom p_1, p_2;
-number a;
+//polynom p_1, p_2;
+Polynom p_1, p_2;
+//number a;
+Number a;
 a = 3 - 2 * 1;
 p_1 = <x - a>;
 p_2 = <x+1x^0>;

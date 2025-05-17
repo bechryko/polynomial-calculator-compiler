@@ -1,0 +1,12 @@
+Polynom p;
+Number n;
+
+p = <7x^2 + 4x + 3>;
+
+if (0) {
+   n = 1;
+} else {
+   n = 3;
+};
+
+p * n;

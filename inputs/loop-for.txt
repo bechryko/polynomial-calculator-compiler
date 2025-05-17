@@ -1,0 +1,8 @@
+Polynom result, tmpPol;
+Number highest, tmpNum;
+
+for(highest = 10, result = 0; highest; highest = highest - 1) {
+   tmpNum = highest;
+   result = result + for(tmpPol = highest; tmpNum; tmpNum = tmpNum - 1) { tmpPol = tmpPol * <x>; };
+};
+result;

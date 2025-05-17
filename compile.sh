@@ -1,8 +1,9 @@
 #!/bin/bash
+set -e
 
 grammar_name="CalculatorLang"
 antlr_package="antlr-4.11.1-complete.jar"
-input_file="input1.txt"
+input_file="polynom-syntax.txt"
 
 if ! [ -e $antlr_package ]
 then

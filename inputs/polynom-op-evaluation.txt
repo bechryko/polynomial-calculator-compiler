@@ -1,0 +1,7 @@
+Polynom p;
+Number n;
+
+p = <4x^4 - 10x^2 + 6x + 1>;
+n = p[p[0]];
+
+p[n + 4];
